@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.5em;
+}
+
+:root {
+  --primary-color: rgb(115, 28, 187);
+  --text-color: #444;
+  --sans-serif: "Roboto", sans-serif;
+  --serif: "Playfair Display", serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--sans-serif);
+  color: var(--text-color);
+}
+
+label,
+p,
+input {
+  color: var(--text-color);
+}
+
+nav {
+  background-color: var(--primary-color);
+  color: #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+}
+
+nav a {
+  color: #eee;
+  text-decoration: none;
+}
+
+nav a#nav-logo {
+  font-size: 2em;
+}
+
+nav ul li {
+  list-style: none;
+}
+
+.container {
+  width: clamp(50%, 100%, 100vw);
+
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+section#login-forms {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.form-div {
+  width: clamp(400px, 40%, 100%);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form label {
+  margin: 0.8em 0px;
+}
+
+.form input {
+  font-size: 1.2em;
+}
+
+button[type="submit"] {
+  all: unset;
+  width: 20%;
+  text-align: center;
+  background-color: var(--primary-color);
+  margin: 0.5em 0px;
+  padding: 0.3em 0px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2em;
+  cursor: pointer;
+}
