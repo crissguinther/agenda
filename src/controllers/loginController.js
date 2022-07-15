@@ -1,4 +1,4 @@
-const { User } = require("../models/UserModel");
+const { User, UserModel } = require("../models/UserModel");
 
 exports.index = (req, res) => {
   res.render("login");
@@ -8,8 +8,8 @@ exports.index = (req, res) => {
 exports.register = async (req, res) => {
   try {
     const user = await new User(req.body);
-    user.register();
-    res.redirect("back");
+    UserModel.create(user.getInfo());
+    res.redirect("/");
   } catch (e) {
     console.log(e);
     res.render("403");

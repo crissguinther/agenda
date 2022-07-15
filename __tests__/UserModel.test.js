@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const { User, UserModel } = require("../src/models/UserModel");
 const request = require("supertest");
+const app = require("../server");
 
 const userBody = {
   name: "Jane Doe",
@@ -44,6 +45,18 @@ describe("It should be a valid user", () => {
     const found = await UserModel.create(user.getInfo());
     console.log(found);
     await expect(found.name).toBeDefined();
+  });
+
+  it("Should create user in db when accessing /login/register", async () => {
+    let user = new User({
+      name: "John Doe",
+      email: "johndoe@gmail.com",
+      password: "JoDo1@90",
+    });
+    let response = await request(app)
+      .post("/login/register")
+      .send(user.getInfo);
+    expect(response).statusCode().toEqual(200);
   });
 
   afterAll(() => {

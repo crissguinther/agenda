@@ -1,5 +1,6 @@
 require("dotenv").config();
-const app = require("./server.js");
+const makeApp = require("./server.js");
+const app = makeApp(process.env.CONNECTION_STRING);
 const port = process.env.PORT;
 
 app.on("database connected", () => {

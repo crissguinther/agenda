@@ -1,23 +1,18 @@
 require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
 const router = require(path.resolve(__dirname, "routes.js"));
-const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const helmet = require("helmet");
 const csrf = require("csurf");
-const { insertCSRFToken } = require("./src/middlewares/middlewares");
-const { handleCSRF } = require("./src/middlewares/middlewares.js");
-
-const connectionString = process.env.CONNECTION_STRING;
-
-mongoose
-  .connect(connectionString)
-  .then(() => app.emit("database connected"))
-  .catch((e) => console.error(e));
+const {
+  handleCSRF,
+  insertCSRFToken,
+} = require("./src/middlewares/middlewares");
 
 const sessionOptions = session({
   secret: process.env.MONGO_STORE_SECRET,
@@ -33,17 +28,26 @@ const sessionOptions = session({
   },
 });
 
-app.set("views", path.resolve(__dirname, "src", "views"));
-app.set("view engine", "ejs");
+function makeApp(connectionString) {
+  mongoose
+    .connect(connectionString)
+    .then(() => app.emit("database connected"))
+    .catch((e) => console.error(e));
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, "public")));
-app.use(sessionOptions);
-app.use(flash());
-app.use(helmet());
-app.use(csrf());
-app.use(insertCSRFToken);
-app.use(handleCSRF);
-app.use(router);
+  app.set("views", path.resolve(__dirname, "src", "views"));
+  app.set("view engine", "ejs");
 
-module.exports = app;
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.static(path.resolve(__dirname, "public")));
+  app.use(sessionOptions);
+  app.use(flash());
+  app.use(helmet());
+  app.use(csrf());
+  app.use(insertCSRFToken);
+  app.use(handleCSRF);
+  app.use(router);
+
+  return app;
+}
+
+module.exports = makeApp;
