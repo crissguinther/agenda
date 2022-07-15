@@ -1,36 +1,28 @@
-const { User } = require("../src/models/UserModel");
+const { default: mongoose } = require("mongoose");
+const { User, UserModel } = require("../src/models/UserModel");
+const request = require("supertest");
 
 const userBody = {
   name: "Jane Doe",
-  username: "janedoe",
   email: "janedoe@gmail.com",
   password: "1Aa#asdfasdf",
 };
 
 describe("It should be a valid user", () => {
-  const user = new User(userBody);
-
-  it("Should include a name", () => {
-    expect(user.name).toEqual("Jane Doe");
-  });
-
-  it("Should include a username", () => {
-    expect(user.username).toEqual("janedoe");
-  });
-
-  it("Should return invalid username length", () => {
-    expect(() => (user.username = "12")).toThrow(
-      "Username must be between 3 and 12 characters long"
+  beforeAll(() => {
+    mongoose.connect(
+      "mongodb://root:root@127.0.0.1:27017/agendas?authSource=admin"
     );
   });
 
-  it("Should return invalid username type", () => {
-    expect(() => (user.username = 12)).toThrow("Username must be a string");
+  const user = new User(userBody);
+
+  it("Should throw error for empty name", () => {
+    expect(() => (user.name = "")).toThrow("You must provide a name");
   });
 
-  it("Should return valid username", () => {
-    user.username = "kassa";
-    expect(user.username).toEqual("kassa");
+  it("Should include a name", () => {
+    expect(user.name).toEqual("Jane Doe");
   });
 
   it("should return invalid email", () => {
@@ -39,7 +31,22 @@ describe("It should be a valid user", () => {
 
   it("should be invalid password", () => {
     expect(() => (user.password = "oioiaoia")).toThrow(
-      "Password must be at least 8 characters longe, contain one uppercase letter, one lowercase letter, one number and one symbol"
+      "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number and one symbol"
     );
+  });
+
+  it("Should create user in db", async () => {
+    let user = new User({
+      name: "John Doe",
+      email: "johndoe@gmail.com",
+      password: "JoDo1@90",
+    });
+    const found = await UserModel.create(user.getInfo());
+    console.log(found);
+    await expect(found.name).toBeDefined();
+  });
+
+  afterAll(() => {
+    mongoose.disconnect();
   });
 });

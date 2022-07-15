@@ -3,29 +3,24 @@ const mongoose = require("mongoose");
 const validatePassword = require("../utils/validatePassword");
 const UserSchema = new mongoose.Schema({
   name: String,
-  username: String,
   email: String,
   password: String,
 });
 
+const UserModel = mongoose.model("Users", UserSchema);
+
 class User {
   constructor(body) {
-    this.username = body.username;
-    this.name = body.name;
-    this.email = body.email;
-    this.password = body.password;
+    Object.assign(this, body);
   }
 
-  set username(username) {
-    if (typeof username != "string")
-      throw new TypeError("Username must be a string");
-    if (username.length < 3 || username.length > 12)
-      throw new Error("Username must be between 3 and 12 characters long");
-    this._username = username;
+  set name(name) {
+    if (!name) throw new Error("You must provide a name");
+    this._name = name;
   }
 
-  get username() {
-    return this._username;
+  get name() {
+    return this._name;
   }
 
   set email(email) {
@@ -41,7 +36,7 @@ class User {
   set password(password) {
     if (!validatePassword(password))
       throw new Error(
-        "Password must be at least 8 characters longe, contain one uppercase letter, one lowercase letter, one number and one symbol"
+        "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number and one symbol"
       );
     this._password = password;
   }
@@ -49,6 +44,10 @@ class User {
   get password() {
     return this._password;
   }
+
+  getInfo() {
+    return { name: this.name, email: this.email, password: this.password };
+  }
 }
 
-module.exports = { User };
+module.exports = { User, UserModel };

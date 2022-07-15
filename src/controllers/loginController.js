@@ -5,8 +5,13 @@ exports.index = (req, res) => {
   return;
 };
 
-exports.register = (req, res) => {
-  const user = new User(req.body);
-  user.register();
-  res.send(user);
+exports.register = async (req, res) => {
+  try {
+    const user = await new User(req.body);
+    user.register();
+    res.redirect("back");
+  } catch (e) {
+    console.log(e);
+    res.render("403");
+  }
 };

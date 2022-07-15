@@ -12,9 +12,12 @@ const csrf = require("csurf");
 const { insertCSRFToken } = require("./src/middlewares/middlewares");
 const { handleCSRF } = require("./src/middlewares/middlewares.js");
 
+const connectionString = process.env.CONNECTION_STRING;
+
 mongoose
-  .connect(process.env.CONNECTION_STRING)
-  .then(() => app.emit("database connected"));
+  .connect(connectionString)
+  .then(() => app.emit("database connected"))
+  .catch((e) => console.error(e));
 
 const sessionOptions = session({
   secret: process.env.MONGO_STORE_SECRET,

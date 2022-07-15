@@ -1,13 +1,13 @@
 version: "3.3"
-services: 
+services:
   database:
-    container_name: 'my-mongo-container'
-    image: 'mongo:4.4'
+    container_name: "agenda_db"
+    image: "mongo:4.4"
     ports:
-      - '27017:27017'
+      - "27017:27017"
     environment:
       - MONGO_INITDB_DATABASE=agenda
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
-      - ./mongo-volume:/mongo/agenda_db
+      - ./database:/data/db
