@@ -28,9 +28,8 @@ const sessionOptions = session({
   },
 });
 
-function makeApp(connectionString) {
-  mongoose
-    .connect(connectionString)
+function makeApp(database) {
+  database
     .then(() => app.emit("database connected"))
     .catch((e) => console.error(e));
 

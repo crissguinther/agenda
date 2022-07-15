@@ -1,7 +1,10 @@
 const { default: mongoose } = require("mongoose");
 const { User, UserModel } = require("../src/models/UserModel");
 const request = require("supertest");
-const app = require("../server");
+const makeApp = require("../server");
+const database = mongoose.connect(
+  "mongodb://root:root@127.0.0.1:27017/agendas?authSource=admin"
+);
 
 const userBody = {
   name: "Jane Doe",
@@ -9,15 +12,9 @@ const userBody = {
   password: "1Aa#asdfasdf",
 };
 
+const user = new User(userBody);
+
 describe("It should be a valid user", () => {
-  beforeAll(() => {
-    mongoose.connect(
-      "mongodb://root:root@127.0.0.1:27017/agendas?authSource=admin"
-    );
-  });
-
-  const user = new User(userBody);
-
   it("Should throw error for empty name", () => {
     expect(() => (user.name = "")).toThrow("You must provide a name");
   });
@@ -43,7 +40,6 @@ describe("It should be a valid user", () => {
       password: "JoDo1@90",
     });
     const found = await UserModel.create(user.getInfo());
-    console.log(found);
     await expect(found.name).toBeDefined();
   });
 
@@ -53,10 +49,11 @@ describe("It should be a valid user", () => {
       email: "johndoe@gmail.com",
       password: "JoDo1@90",
     });
+    const app = makeApp(database);
     let response = await request(app)
       .post("/login/register")
-      .send(user.getInfo);
-    expect(response).statusCode().toEqual(200);
+      .send(user.getInfo());
+    expect((res) => expect(res.status).toEquals(200));
   });
 
   afterAll(() => {

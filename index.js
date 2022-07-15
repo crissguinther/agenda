@@ -1,6 +1,8 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
+const database = mongoose.connect(process.env.CONNECTION_STRING);
 const makeApp = require("./server.js");
-const app = makeApp(process.env.CONNECTION_STRING);
+const app = makeApp(database);
 const port = process.env.PORT;
 
 app.on("database connected", () => {
