@@ -1,4 +1,6 @@
-const { User, UserModel } = require("../models/UserModel");
+const UserModel = require("../models/UserModel");
+const User = require("../entities/User");
+const bcrypt = require("bcrypt");
 
 exports.index = (req, res) => {
   res.render("login");
@@ -7,11 +9,17 @@ exports.index = (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const user = await new User(req.body);
-    UserModel.create(user.getInfo());
-    res.redirect("/");
+    const user = new User(req.body);
+    const findUserQuery = await UserModel.find({ email: user.email });
+    if (findUserQuery.length > 0) throw new Error("Email already in use");
+    await UserModel.create({
+      ...user.getInfo(),
+      password: bcrypt.hashSync(user.password, 10),
+    });
+    res.redirect("back");
   } catch (e) {
-    console.log(e);
-    res.render("403");
+    res
+      .status(500)
+      .render("error", { status: res.statusCode, error: e.toString() });
   }
 };

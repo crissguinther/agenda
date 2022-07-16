@@ -6,9 +6,12 @@
   "scripts": {
     "server": "nodemon index.js --ignore ./public --ignore ./frontend",
     "webpack": "webpack -w",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "pretest": "NODE_ENV=test",
+    "test": "yarn jest"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "core-js": "^3.23.4",

@@ -1,18 +1,17 @@
 const { default: mongoose } = require("mongoose");
-const { User, UserModel } = require("../src/models/UserModel");
+const UserModel = require("../../src/models/UserModel");
+const User = require("../../src/entities/User");
 const request = require("supertest");
-const makeApp = require("../server");
+const makeApp = require("../../server");
 const database = mongoose.connect(
   "mongodb://root:root@127.0.0.1:27017/agendas?authSource=admin"
 );
 
-const userBody = {
+let user = new User({
   name: "Jane Doe",
   email: "janedoe@gmail.com",
   password: "1Aa#asdfasdf",
-};
-
-const user = new User(userBody);
+});
 
 describe("It should be a valid user", () => {
   it("Should throw error for empty name", () => {
@@ -33,18 +32,8 @@ describe("It should be a valid user", () => {
     );
   });
 
-  it("Should create user in db", async () => {
-    let user = new User({
-      name: "John Doe",
-      email: "johndoe@gmail.com",
-      password: "JoDo1@90",
-    });
-    const found = await UserModel.create(user.getInfo());
-    await expect(found.name).toBeDefined();
-  });
-
-  it("Should create user in db when accessing /login/register", async () => {
-    let user = new User({
+  it("Shouldn't create user in db when accessing /login/register", async () => {
+    user = new User({
       name: "John Doe",
       email: "johndoe@gmail.com",
       password: "JoDo1@90",
@@ -53,7 +42,7 @@ describe("It should be a valid user", () => {
     let response = await request(app)
       .post("/login/register")
       .send(user.getInfo());
-    expect((res) => expect(res.status).toEquals(200));
+    expect(response.statusCode).toEqual(500);
   });
 
   afterAll(() => {

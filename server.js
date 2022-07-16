@@ -1,18 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
 const router = require(path.resolve(__dirname, "routes.js"));
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
-const helmet = require("helmet");
-const csrf = require("csurf");
-const {
-  handleCSRF,
-  insertCSRFToken,
-} = require("./src/middlewares/middlewares");
 
 const sessionOptions = session({
   secret: process.env.MONGO_STORE_SECRET,
@@ -40,10 +33,16 @@ function makeApp(database) {
   app.use(express.static(path.resolve(__dirname, "public")));
   app.use(sessionOptions);
   app.use(flash());
-  app.use(helmet());
-  app.use(csrf());
-  app.use(insertCSRFToken);
-  app.use(handleCSRF);
+  if (process.env.NODE_ENV !== "test") {
+    const {
+      handleCSRF,
+      insertCSRFToken,
+    } = require("./src/middlewares/middlewares");
+    app.use(require("helmet")());
+    app.use(require("csurf")());
+    app.use(insertCSRFToken);
+    app.use(handleCSRF);
+  }
   app.use(router);
 
   return app;
