@@ -11,7 +11,7 @@ const sessionOptions = session({
   secret: process.env.MONGO_STORE_SECRET,
   store: MongoStore.create({
     mongoUrl: process.env.CONNECTION_STRING,
-    dbName: "test-sessions",
+    dbName: "Agenda",
   }),
   resave: false,
   saveUninitialized: false,

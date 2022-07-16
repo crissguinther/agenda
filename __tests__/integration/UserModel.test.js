@@ -46,6 +46,7 @@ describe("It should be a valid user", () => {
   });
 
   afterAll(() => {
+    UserModel.deleteMany();
     mongoose.disconnect();
   });
 });
